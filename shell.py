@@ -40,19 +40,21 @@ class Shell:
         """Echo back user arguments."""
         print(" ".join(args))
 
-    def cmd_type(self, cmd, _args):
+    def cmd_type(self, _cmd, args):
         """Show if a command is builtin."""
 
-        if cmd in self.commands:
-            print(f"{cmd} is a shell builtin")
+        command = args[0]
+
+        if command in self.commands:
+            print(f"{command} is a shell builtin")
         else:
-            executable_path = self.find_executable_in_path(cmd)
+            executable_path = self.find_executable_in_path(command)
 
             if executable_path is None:
-                self.cmd_not_found(cmd)
+                self.cmd_not_found(command)
 
             else:
-                print(f"{cmd} is {executable_path}")
+                print(f"{command} is {executable_path}")
 
     def cmd_not_found(self, cmd, args=None):
         """Handle unknown commands."""
