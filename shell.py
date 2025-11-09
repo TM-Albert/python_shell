@@ -7,7 +7,8 @@ class Shell:
         self.commands = {
             "exit": self.cmd_exit,
             "echo": self.cmd_echo,
-            "type": self.cmd_type
+            "type": self.cmd_type,
+            "pwd": self.cmd_pwd
         }
         self.PATH = os.environ["PATH"].split(":")
 
@@ -56,6 +57,10 @@ class Shell:
             else:
                 print(f"{command} is {executable_path}")
 
+    def cmd_pwd(self, _cmd, _args):
+        """Displays current working directory."""
+        print(os.getcwd())
+            
     def cmd_not_found(self, cmd, args=None):
         """Handle unknown commands."""
 
