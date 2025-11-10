@@ -8,7 +8,8 @@ class Shell:
             "exit": self.cmd_exit,
             "echo": self.cmd_echo,
             "type": self.cmd_type,
-            "pwd": self.cmd_pwd
+            "pwd": self.cmd_pwd,
+            "cd": self.cmd_cd
         }
         self.PATH = os.environ["PATH"].split(":")
 
@@ -60,6 +61,21 @@ class Shell:
     def cmd_pwd(self, _cmd, _args):
         """Displays current working directory."""
         print(os.getcwd())
+
+    def cmd_cd(self, cmd, args):
+        """Changing current working directory"""
+
+        root_path = os.path.expanduser("~")
+        cd_path = args[0]
+
+        absolute_path = os.path.join(root_path, cd_path)
+        absolute_path_exists = os.path.exists(absolute_path)
+
+        if not absolute_path_exists:
+            print(f"cd: {args[0]}: No such file or directory")
+            return
+        
+        os.chdir(absolute_path)
             
     def cmd_not_found(self, cmd, args=None):
         """Handle unknown commands."""
