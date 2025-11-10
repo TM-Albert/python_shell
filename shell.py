@@ -65,17 +65,36 @@ class Shell:
     def cmd_cd(self, cmd, args):
         """Changing current working directory"""
 
-        root_path = os.path.expanduser("~")
-        cd_path = args[0]
+        if not args:
+            target = os.path.expanduser("~")
 
-        absolute_path = os.path.join(root_path, cd_path)
-        absolute_path_exists = os.path.exists(absolute_path)
+        else:
+            raw = args[0]
+            
+            # starts with ~
+            if raw.startswith("~"):
+                target = os.path.expanduser(raw)
 
-        if not absolute_path_exists:
-            print(f"cd: {args[0]}: No such file or directory")
+            # absolute path
+            elif os.path.isabs(raw):
+                target = raw
+
+            # relative path
+            else:
+                target = os.path.normpath(os.path.join(os.getcwd(), raw))
+
+        if not os.path.exists(target):
+            print(f"cd: {target}: No such file or directory")
             return
         
-        os.chdir(absolute_path)
+        if not os.path.isdir(target):
+            print(f"cd: {target}: Not a directory")
+            return
+        
+        try:
+            os.chdir(target)
+        except PermissionError:
+            print(f"cd: {target}: Permission denied")
             
     def cmd_not_found(self, cmd, args=None):
         """Handle unknown commands."""
