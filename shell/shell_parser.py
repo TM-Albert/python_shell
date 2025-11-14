@@ -1,5 +1,3 @@
-import os
-import sys
 from executor import ShellExecutor
 from models import CommandObject
 from typing import List
@@ -19,7 +17,7 @@ class ShellParser:
         self.commands_flow_list: List[CommandObject] = []
         self.commands_flow_index: int = 0
 
-    def create_command_object(self, token: str) -> None:
+    def _create_command_object(self, token: str) -> None:
         """ Creates new CommandObject in the commands_flow_list
 
         Args:
@@ -31,7 +29,7 @@ class ShellParser:
         self.commands_flow_list.append(CommandObject(command=token, args=[]))
         self.commands_flow_index+=1
 
-    def assign_redirect(self, redirect: str, redirect_file: str) -> None:
+    def _assign_redirect(self, redirect: str, redirect_file: str) -> None:
         """ Assigns redirect parameter to existing CommandObject
 
         Args:
@@ -44,7 +42,7 @@ class ShellParser:
         redirect_command = self.redirects.get(redirect)
         setattr(self.commands_flow_list[self.commands_flow_index], redirect_command, redirect_file)
 
-    def assign_operator(self, operator: str) -> None:
+    def _assign_operator(self, operator: str) -> None:
         """ Assigns operator parameter to existing CommandObject
         
         Args:
@@ -55,7 +53,7 @@ class ShellParser:
         """
         self.commands_flow_list[self.commands_flow_index].operator = operator
 
-    def assign_argument(self, argument: str) -> None:
+    def _assign_argument(self, argument: str) -> None:
         """ Assigns argument parameter to existing CommandObject list of args
         
         Args:
@@ -82,16 +80,16 @@ class ShellParser:
         
         for index, token in enumerate(tokenized_commands):
             if token in self.supported_commands:
-                self.create_command_object(token)
+                self._create_command_object(token)
 
             elif token in self.redirects:
                 file_name = tokenized_commands[index + 1]
-                self.assign_redirect(token, file_name)
+                self._assign_redirect(token, file_name)
     
             elif token in self.operators:
-                self.assign_operator(token)
+                self._assign_operator(token)
 
             else:
-                self.assign_argument(token)
+                self._assign_argument(token)
 
         return self.commands_flow_list
