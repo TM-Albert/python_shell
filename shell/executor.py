@@ -2,6 +2,10 @@ import os
 import sys
 
 class ShellExecutor:
+    """
+    ShellExecutor is responsible for executing the shell program
+    """
+
     def __init__(self):
         self.supported_commands = {
             "exit": None,
@@ -27,10 +31,10 @@ class ShellExecutor:
 
     def supported_commands(self):
         """
-        
+        Returns a list of currently supported shell commands.
         """
-
-        print(self.supported_commands.__doc__)
+        for i, cmd in enumerate(self.commands.keys(), 1):
+            print(f"{i}- {cmd.upper()}")
 
     def run(self):
         """
