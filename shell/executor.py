@@ -42,4 +42,22 @@ class ShellExecutor:
         """
         
         """
-        pass
+
+        while True:
+            # Output buffer
+            sys.stdout.write("$ ")
+            sys.stdout.flush() # forces Python to empty the buffer immediately and write it to the terminal.
+            input = sys.stdin.readline()
+
+            print(input)
+
+            # tokenized_input = ShellTokenizer().tokenize(input)
+            # parsed_input = ShellParser().parse(tokenized_input)
+
+            # Execution of the CommandObjects with the help of builtin functions
+
+if __name__ == "__main__":
+
+
+    se = ShellExecutor()
+    se.run()

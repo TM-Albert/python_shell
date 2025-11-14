@@ -1,4 +1,3 @@
-from executor import ShellExecutor
 from models import CommandObject
 from typing import List
 
@@ -10,6 +9,8 @@ class ShellParser:
     """
 
     def __init__(self):
+        from executor import ShellExecutor
+
         self.supported_commands = ShellExecutor().supported_commands
         self.operators = ShellExecutor().operators
         self.redirects = ShellExecutor().redirects
@@ -75,6 +76,7 @@ class ShellParser:
 
         Example:
             >>> tokenized_commands = ['echo', 'Hello     world', '>', './cmd/files/mop.md', '&&', 'echo', 'Hello', 'world']
+            @ Write the output example
             >>> Output
         """
         
