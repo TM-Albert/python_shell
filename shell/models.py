@@ -1,20 +1,18 @@
 from pydantic import BaseModel
 from collections import deque
+from typing import Optional
 
 class CommandObject(BaseModel):
     command: str
     args: list[str]
-    stdin_redirect: str | None = None
-    stdout_redirect: str | None = None
-    operator: str | None = None # "&&", "||", or None
-
-class CommandsTree:
-    def __init__(self):
-        pass
-
-    
+    stdin_redirect: Optional[str] = None
+    stdout_redirect: Optional[str] = None
+    operator: Optional[str] = None # "&&", "||", or None
+    output: Optional[str] = None
+    output_status_code: int = 0 # 0 succeeded 1 failed
 
 class CommandTreeNode:
-    def __init__(self, data):
+    def __init__(self, data=None, right=None, left=None):
         self.data = data
-        
+        self.right = right
+        self.left = left

@@ -16,15 +16,11 @@ class ShellExecutor:
             ";",
             "||",
             "|"
-
         }
 
         self.redirects = {
-            ">",
-            ">>",
-            "<",
-            "2>",
-            "&>"
+            ">": "stdout_redirect",
+            "<": "stdin_redirect"
         }
 
         self.PATH = os.environ["PATH"].split(":")
