@@ -8,15 +8,10 @@ class ShellParser:
     representing the program flow.
     """
 
-    def __init__(self):
-        from executor import ShellExecutor
-
-        self.supported_commands = ShellExecutor().supported_commands
-        self.operators = ShellExecutor().operators
-        self.redirects = ShellExecutor().redirects
-
-        self.commands_flow_list: List[CommandObject] = []
-        self.commands_flow_index: int = 0
+    def __init__(self, supported: set[str], redirects: set[str], operators: set[str]):
+        self.supported_commands = supported
+        self.operators = operators
+        self.redirects = redirects
 
     def _create_command_object(self, token: str) -> None:
         """ Creates new CommandObject in the commands_flow_list
@@ -65,6 +60,10 @@ class ShellParser:
         """
         self.commands_flow_list[self.commands_flow_index].args.append(argument)
 
+    def _get_current_command_object(self) -> CommandObject:
+        """ Returns current command object """
+        return self.commands_flow_list[self.commands_flow_index]
+
     def parse(self, tokenized_commands: List[str]) -> List[CommandObject]:
         """Parses tokenized commands provided by user from the console.
 
@@ -79,6 +78,9 @@ class ShellParser:
             @ Write the output example
             >>> Output
         """
+
+        self._commands_flow_list = []
+        self._commands_flow_index = -1
         
         for index, token in enumerate(tokenized_commands):
             if token in self.supported_commands:
@@ -92,6 +94,11 @@ class ShellParser:
                 self._assign_operator(token)
 
             else:
+                current_command_object = self._get_current_command_object()
+
+                if token == current_command_object.stdin_redirect or current_command_object.stdout_redirect:
+                    continue
+
                 self._assign_argument(token)
 
-        return self.commands_flow_list
+        return self._commands_flow_list

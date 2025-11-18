@@ -2,6 +2,7 @@ import os
 import sys
 from tokenizer import ShellTokenizer 
 from shell_parser import ShellParser
+from shell_builtins import ShellBuiltins
 
 class ShellExecutor:
     """
@@ -9,14 +10,7 @@ class ShellExecutor:
     """
 
     def __init__(self):
-        self.supported_commands = {
-            "exit": None,
-            "echo": None,
-            "type": None,
-            "pwd": None,
-            "cd": None
-        }
-
+        self.supported_commands = ShellBuiltins().builtin_commands
         self.operators = {
             "&&",
             ";",
@@ -35,7 +29,7 @@ class ShellExecutor:
         """
         Returns a list of currently supported shell commands.
         """
-        for i, cmd in enumerate(self.commands.keys(), 1):
+        for i, cmd in enumerate(self.supported_commands.keys(), 1):
             print(f"{i}- {cmd.upper()}")
 
     def run(self):
@@ -47,17 +41,23 @@ class ShellExecutor:
             # Output buffer
             sys.stdout.write("$ ")
             sys.stdout.flush() # forces Python to empty the buffer immediately and write it to the terminal.
-            input = sys.stdin.readline()
+            line = sys.stdin.readline()
 
-            print(input)
+            if not line.strip():
+                continue
 
-            # tokenized_input = ShellTokenizer().tokenize(input)
-            # parsed_input = ShellParser().parse(tokenized_input)
+            tokenized_line = ShellTokenizer().tokenize(line)
+
+            parser = ShellParser(
+                supported=self.supported_commands,
+                operators=self.operators,
+                redirects=self.redirects
+            )
+
+            command_flow = parser.parse(tokenized_line)
 
             # Execution of the CommandObjects with the help of builtin functions
 
 if __name__ == "__main__":
-
-
     se = ShellExecutor()
     se.run()
