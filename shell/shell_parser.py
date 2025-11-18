@@ -22,7 +22,7 @@ class ShellParser:
         Return:
             None
         """
-        self.commands_flow_list.append(CommandObject(command=token, args=[]))
+        self._commands_flow_list.append(CommandObject(command=token, args=[]))
         self.commands_flow_index+=1
 
     def _assign_redirect(self, redirect: str, redirect_file: str) -> None:
@@ -36,7 +36,7 @@ class ShellParser:
             None
         """
         redirect_command = self.redirects.get(redirect)
-        setattr(self.commands_flow_list[self.commands_flow_index], redirect_command, redirect_file)
+        setattr(self._commands_flow_list[self.commands_flow_index], redirect_command, redirect_file)
 
     def _assign_operator(self, operator: str) -> None:
         """ Assigns operator parameter to existing CommandObject
@@ -47,7 +47,7 @@ class ShellParser:
         Return:
             None
         """
-        self.commands_flow_list[self.commands_flow_index].operator = operator
+        self._commands_flow_list[self.commands_flow_index].operator = operator
 
     def _assign_argument(self, argument: str) -> None:
         """ Assigns argument parameter to existing CommandObject list of args
@@ -58,11 +58,11 @@ class ShellParser:
         Return:
             None
         """
-        self.commands_flow_list[self.commands_flow_index].args.append(argument)
+        self._commands_flow_list[self.commands_flow_index].args.append(argument)
 
     def _get_current_command_object(self) -> CommandObject:
         """ Returns current command object """
-        return self.commands_flow_list[self.commands_flow_index]
+        return self._commands_flow_list[self.commands_flow_index]
 
     def parse(self, tokenized_commands: List[str]) -> List[CommandObject]:
         """Parses tokenized commands provided by user from the console.
