@@ -56,6 +56,8 @@ class ShellExecutor:
 
             command_flow = parser.parse(tokenized_line)
 
+            print(command_flow)
+
             # Execution of the CommandObjects with the help of builtin functions
 
 if __name__ == "__main__":

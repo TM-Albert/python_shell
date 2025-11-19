@@ -14,16 +14,9 @@ class ShellParser:
         self.redirects = redirects
 
     def _create_command_object(self, token: str) -> None:
-        """ Creates new CommandObject in the commands_flow_list
-
-        Args:
-            token (str): token from the command
-
-        Return:
-            None
-        """
+        """ Creates new CommandObject in the commands_flow_list """
         self._commands_flow_list.append(CommandObject(command=token, args=[]))
-        self.commands_flow_index+=1
+        self._commands_flow_index+=1
 
     def _assign_redirect(self, redirect: str, redirect_file: str) -> None:
         """ Assigns redirect parameter to existing CommandObject
@@ -36,33 +29,29 @@ class ShellParser:
             None
         """
         redirect_command = self.redirects.get(redirect)
-        setattr(self._commands_flow_list[self.commands_flow_index], redirect_command, redirect_file)
+        setattr(self._get_current_command_object(), redirect_command, redirect_file)
 
     def _assign_operator(self, operator: str) -> None:
-        """ Assigns operator parameter to existing CommandObject
-        
-        Args:
-            operator (str): operator token from the command
-
-        Return:
-            None
-        """
-        self._commands_flow_list[self.commands_flow_index].operator = operator
+        """ Assigns operator parameter to existing CommandObject """
+        self._get_current_command_object().operator = operator
 
     def _assign_argument(self, argument: str) -> None:
-        """ Assigns argument parameter to existing CommandObject list of args
-        
-        Args:
-            argument (str): argument token from the command
-
-        Return:
-            None
-        """
-        self._commands_flow_list[self.commands_flow_index].args.append(argument)
+        """ Assigns argument parameter to existing CommandObject list of args """
+        self._get_current_command_object().args.append(argument)
 
     def _get_current_command_object(self) -> CommandObject:
         """ Returns current command object """
-        return self._commands_flow_list[self.commands_flow_index]
+        return self._commands_flow_list[self._commands_flow_index]
+    
+    def _token_assigned_to_stdin(self, token: str) -> bool:
+        """Check if token is assign to stdin or stdout parameter in CommandObject"""
+
+        current_command_object = self._get_current_command_object()
+
+        if token == current_command_object.stdin_redirect or current_command_object.stdout_redirect:
+            return True
+        
+        return False
 
     def parse(self, tokenized_commands: List[str]) -> List[CommandObject]:
         """Parses tokenized commands provided by user from the console.
@@ -75,14 +64,34 @@ class ShellParser:
 
         Example:
             >>> tokenized_commands = ['echo', 'Hello     world', '>', './cmd/files/mop.md', '&&', 'echo', 'Hello', 'world']
-            @ Write the output example
-            >>> Output
+            >>> commands_flow_list =
+            >>> [
+            >>>        CommandObject(
+            >>>            command='echo', 
+            >>>            args=['Hello     world'], 
+            >>>            stdin_redirect=None, 
+            >>>            stdout_redirect='./cmd/files/mop.md', 
+            >>>            operator='&&', 
+            >>>            output=None, 
+            >>>            output_status_code=0
+            >>>        ), 
+            >>>        CommandObject(
+            >>>            command='echo', 
+            >>>            args=['Hello world'], 
+            >>>            stdin_redirect=None, 
+            >>>            stdout_redirect=None, 
+            >>>            operator=None, 
+            >>>            output=None, 
+            >>>            output_status_code=0
+            >>>        )
+            >>>  ]
         """
 
         self._commands_flow_list = []
         self._commands_flow_index = -1
         
         for index, token in enumerate(tokenized_commands):
+
             if token in self.supported_commands:
                 self._create_command_object(token)
 
@@ -94,9 +103,7 @@ class ShellParser:
                 self._assign_operator(token)
 
             else:
-                current_command_object = self._get_current_command_object()
-
-                if token == current_command_object.stdin_redirect or current_command_object.stdout_redirect:
+                if self._token_assigned_to_stdin(token):
                     continue
 
                 self._assign_argument(token)
