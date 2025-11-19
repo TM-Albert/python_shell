@@ -10,6 +10,7 @@ class CommandObject(BaseModel):
     operator: Optional[str] = None # "&&", "||", or None
     output: Optional[str] = None
     output_status_code: int = 0 # 0 succeeded 1 failed
+    unsuported_command: bool = False
 
 class CommandTreeNode:
     def __init__(self, data=None, right=None, left=None):

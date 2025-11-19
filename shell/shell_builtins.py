@@ -32,20 +32,43 @@ class ShellBuiltins:
             for name in dir(self) if name.startswith('cmd_')
         }
 
+        self.PATH = os.environ["PATH"].split(":")
+
+    def _find_executable_in_path(self, executable_file_name):
+        """
+        Search directories listed in the PATH environment variable for an executable file.
+
+        Args:
+            cmd_name (str): Name of the executable to locate.
+
+        Returns:
+            str | None: Full path to the executable if found and executable, otherwise None.
+        """
+        found_potencial_file = False
+        potential_path = None
+
+        for folder_path in self.PATH:
+            potential_path = os.path.join(folder_path, executable_file_name)
+
+            if os.path.isfile(potential_path) and os.access(potential_path, os.X_OK):
+                found_potencial_file = True
+                break
+
+        if found_potencial_file:
+            return potential_path
+        
+        return None
+
     def cmd_exit(self, *_):
         """Exits the program"""
         return True
 
-    def cmd_echo(self):
-        """
-        
-        """
-        pass
+    def cmd_echo(self, _cmd, args):
+        """Echo back user arguments."""
+        print(" ".join(args))
 
     def cmd_type(self):
-        """
-        
-        """
+        """Show if a command is builtin."""
         pass
 
     def cmd_pwd(self):
@@ -58,17 +81,24 @@ class ShellBuiltins:
         """
         pass
 
-    def cmd_cat(self):
+    def cmd_cat(self, cmd, args):
         """
         
         """
         pass
 
-    def cmd_not_found(self):
-        """
+    def cmd_not_found(self, cmd, args=None):
+        """Handle unknown commands."""
+
+        executable_path = self._find_executable_in_path(cmd)
+
+        if executable_path is None:
+            print(f"{cmd}: not found")
+            return
+
+        subprocess.run([cmd, *args])
+        return
         
-        """
-        pass
 
 
 if __name__ == "__main__":

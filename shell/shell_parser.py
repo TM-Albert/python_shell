@@ -52,6 +52,18 @@ class ShellParser:
             return True
         
         return False
+    
+    def _lookup_command(self, command: str) -> bool:
+        """Check if command is in list of supported commands"""
+
+        if command in self.supported_commands:
+            return True
+        
+        return False
+    
+    def _create_unsuported_command_object(self, command: str):
+        """Creates unsuported command object"""
+        self._commands_flow_list.append(CommandObject(command=command, args=[], unsuported_command=True))
 
     def parse(self, tokenized_commands: List[str]) -> List[CommandObject]:
         """Parses tokenized commands provided by user from the console.
@@ -89,23 +101,29 @@ class ShellParser:
 
         self._commands_flow_list = []
         self._commands_flow_index = -1
+
+        main_command = tokenized_commands[0]
+        command_supported = self._lookup_command(main_command)
+
+        if command_supported:
+            for index, token in enumerate(tokenized_commands):
+
+                if token in self.supported_commands:
+                    self._create_command_object(token)
+
+                elif token in self.redirects:
+                    file_name = tokenized_commands[index + 1]
+                    self._assign_redirect(token, file_name)
         
-        for index, token in enumerate(tokenized_commands):
+                elif token in self.operators:
+                    self._assign_operator(token)
 
-            if token in self.supported_commands:
-                self._create_command_object(token)
+                else:
+                    if self._token_assigned_to_stdin(token):
+                        continue
 
-            elif token in self.redirects:
-                file_name = tokenized_commands[index + 1]
-                self._assign_redirect(token, file_name)
-    
-            elif token in self.operators:
-                self._assign_operator(token)
-
-            else:
-                if self._token_assigned_to_stdin(token):
-                    continue
-
-                self._assign_argument(token)
-
+                    self._assign_argument(token)
+        else:
+            self._create_unsuported_command_object(main_command)
+        
         return self._commands_flow_list

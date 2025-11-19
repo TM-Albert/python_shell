@@ -1,5 +1,6 @@
 import os
 import sys
+from models import CommandObject
 from tokenizer import ShellTokenizer 
 from shell_parser import ShellParser
 from shell_builtins import ShellBuiltins
@@ -32,6 +33,13 @@ class ShellExecutor:
         for i, cmd in enumerate(self.supported_commands.keys(), 1):
             print(f"{i}- {cmd.upper()}")
 
+    def execute(self, command_list: list[CommandObject]):
+        """
+
+        Execution of the command object
+
+        """
+
     def run(self):
         """
         
@@ -55,8 +63,6 @@ class ShellExecutor:
             )
 
             command_flow = parser.parse(tokenized_line)
-
-            print(command_flow)
 
             # Execution of the CommandObjects with the help of builtin functions
 
