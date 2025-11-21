@@ -1,4 +1,4 @@
-from models import CommandObject
+from shell_models import CommandObject
 from typing import List
 
 class ShellParser:

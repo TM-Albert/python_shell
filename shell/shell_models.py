@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from collections import deque
 from typing import Optional
 
 class CommandObject(BaseModel):
