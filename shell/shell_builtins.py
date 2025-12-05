@@ -166,6 +166,31 @@ class ShellBuiltins:
 
         os.system(self.SUBPROCESS_WINDOWS_CLEAR if os.name == "nt" else "clear")
         return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
+    
+    def cmd_mkdir(self, _cmd, args) -> Tuple[int, Optional[str], bool]:
+        """
+        Creates new directory
+        """
+
+        folder_name = args[0]
+        os.mkdir(folder_name)
+
+        return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
+
+    def cmd_rmdir(self, cmd, args) -> Tuple[int, Optional[str], bool]:
+        """
+        Removes directory
+        """
+
+        try:
+            folder_name = args[0]
+            os.rmdir(folder_name)
+
+            return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
+
+        except Exception as e:
+            error_output = f"shell: execution error for {cmd}: {e}"
+            return self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT
 
     def cmd_not_found(self, cmd_name: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
         """
