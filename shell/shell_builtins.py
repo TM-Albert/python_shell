@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 from typing import Optional, Tuple
 
@@ -54,6 +55,14 @@ class ShellBuiltins:
         self.SHOULD_EXIT: bool = True
         self.SHOULD_NOT_EXIT: bool = False
         self.COMMAND_NOT_FOUND_EXIT_FLAG: int = 127
+        # -------------------------------------------
+
+        # --- DEFINED SUBPROCESS COMMANDS FOR WINDOWS ---
+        self.SUBPROCESS_WINDOWS_CLEAR = "cls"
+        # -------------------------------------------
+
+        # --- DEFINED SUBPROCESS COMMANDS FOR LINUX ---
+        self.SUBPROCESS_LINUX_CLEAR = "clear"
         # -------------------------------------------
 
     def _find_executable_in_path(self, executable_file_name: str) -> Optional[str]:
@@ -149,6 +158,14 @@ class ShellBuiltins:
         
         """
         pass
+
+    def cmd_clear(self, _cmd, _args) -> Tuple[int, Optional[str], bool]:
+        """
+        Handles cleaning user terminal from all commands and outputs
+        """
+
+        os.system(self.SUBPROCESS_WINDOWS_CLEAR if os.name == "nt" else "clear")
+        return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
 
     def cmd_not_found(self, cmd_name: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
         """
