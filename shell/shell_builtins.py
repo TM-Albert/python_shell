@@ -56,14 +56,6 @@ class ShellBuiltins:
         self.COMMAND_NOT_FOUND_EXIT_FLAG: int = 127
         # -------------------------------------------
 
-        # --- DEFINED SUBPROCESS COMMANDS FOR WINDOWS ---
-        self.SUBPROCESS_WINDOWS_CLEAR = "cls"
-        # -------------------------------------------
-
-        # --- DEFINED SUBPROCESS COMMANDS FOR LINUX ---
-        self.SUBPROCESS_LINUX_CLEAR = "clear"
-        # -------------------------------------------
-
     def _find_executable_in_path(self, executable_file_name: str) -> Optional[str]:
         """
         Searches directories listed in the PATH environment variable for an executable file.
