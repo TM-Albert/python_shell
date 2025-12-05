@@ -1,6 +1,8 @@
 import os
+import socket
 import subprocess
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict
+from shell_utils import ShellUtils
 
 class ShellBuiltins:
     """
@@ -55,6 +57,15 @@ class ShellBuiltins:
         self.SHOULD_NOT_EXIT: bool = False
         self.COMMAND_NOT_FOUND_EXIT_FLAG: int = 127
         # -------------------------------------------
+
+        # Utils class that holds all extended methods
+        self.shell_utils = ShellUtils()
+
+        # Utils extended methods
+        self.NET_COMMANDS: Dict[str, function] = {
+            "getip": self.shell_utils.net_getip,
+            "scanports": self.shell_utils.net_scanports
+        }
 
     def _find_executable_in_path(self, executable_file_name: str) -> Optional[str]:
         """
@@ -221,6 +232,22 @@ class ShellBuiltins:
         except Exception as e:
             error_output = f"shell: execution error for {cmd}: {e}"
             return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
+
+
+    def cmd_net(self, cmd: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
+        """
+        Custom network scanner that handles:
+            - getip: 
+            - scanports: 
+        """
+        
+        if args[0] not in self.NET_COMMANDS.keys():
+            error_output = f"shell: execution error for {cmd}: {args[0]} is not supported in the net command"
+            return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
+    
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
 
 
     def cmd_not_found(self, cmd_name: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
