@@ -1,5 +1,4 @@
 import os
-import sys
 import subprocess
 from typing import Optional, Tuple
 
@@ -81,24 +80,31 @@ class ShellBuiltins:
         
         return None
 
+
     def cmd_exit(self, *_) -> Tuple[int, Optional[str], bool]:
         """Exits the program"""
         print("Exiting shell.")
         return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_EXIT)
+
 
     def cmd_echo(self, _cmd: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
         """Echo back user arguments."""
         output = " ".join(args)
         return (self.STATUS_CODE_SUCCESS, output, self.SHOULD_NOT_EXIT)
 
+
     def cmd_type(self, _cmd: str, _args: list[str]) -> Tuple[int, Optional[str], bool]:
         """Show if a command is builtin."""
+
+        # TO IMPLEMENT
         pass
+
 
     def cmd_pwd(self, _cmd: str, _args: list[str]) -> Tuple[int, Optional[str], bool]:
         """Displays current working directory."""
         output = os.getcwd()
         return (self.STATUS_CODE_SUCCESS, output, self.SHOULD_NOT_EXIT)
+
 
     def cmd_cd(self, _cmd: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
         """Changes the current working directory"""
@@ -144,30 +150,34 @@ class ShellBuiltins:
             os.chdir(final_path)
 
             # Success: Return status 0 (Success) and no output text.
-            return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
+            return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
         
         except OSError as e:
             # Failure: Catch any OS-level error (non-existent folder, permission issues, etc.)
             error_message = f"cd: {raw_path}: {e.strerror}"
 
             # Return status 1 (Failed) and the error message.
-            return self.STATUS_CODE_FAILED, error_message, self.SHOULD_NOT_EXIT
+            return (self.STATUS_CODE_FAILED, error_message, self.SHOULD_NOT_EXIT)
 
-    def cmd_cat(self, cmd, args) -> Tuple[int, Optional[str], bool]:
+
+    def cmd_cat(self, cmd: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
         """
         
         """
+        # TO IMPLEMENT
         pass
 
-    def cmd_clear(self, _cmd, _args) -> Tuple[int, Optional[str], bool]:
+
+    def cmd_clear(self, _cmd: str, _args: list[str]) -> Tuple[int, Optional[str], bool]:
         """
         Handles cleaning user terminal from all commands and outputs
         """
 
         os.system(self.SUBPROCESS_WINDOWS_CLEAR if os.name == "nt" else "clear")
-        return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
+        return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
     
-    def cmd_mkdir(self, _cmd, args) -> Tuple[int, Optional[str], bool]:
+
+    def cmd_mkdir(self, _cmd: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
         """
         Creates new directory
         """
@@ -175,7 +185,8 @@ class ShellBuiltins:
         folder_name = args[0]
         os.mkdir(folder_name)
 
-        return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
+        return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
+
 
     def cmd_rmdir(self, cmd, args) -> Tuple[int, Optional[str], bool]:
         """
@@ -186,11 +197,39 @@ class ShellBuiltins:
             folder_name = args[0]
             os.rmdir(folder_name)
 
-            return self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT
+            return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
 
         except Exception as e:
             error_output = f"shell: execution error for {cmd}: {e}"
-            return self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT
+            return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
+        
+
+    def cmd_touch(self, cmd: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
+        """
+        Creates a file
+        """
+        try:
+            open(args[0], "w").close()
+            return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
+
+        except Exception as e:
+            error_output = f"shell: execution error for {cmd}: {e}"
+            return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
+        
+
+    def cmd_rm(self, cmd: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
+        """
+        Deletes a file
+        """
+
+        try:
+            os.remove(args[0])
+            return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
+
+        except Exception as e:
+            error_output = f"shell: execution error for {cmd}: {e}"
+            return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
+
 
     def cmd_not_found(self, cmd_name: str, args: list[str]) -> Tuple[int, Optional[str], bool]:
         """
@@ -203,7 +242,7 @@ class ShellBuiltins:
         if executable_path is None:
             # Command not found, return status 127
             error_output = f"{cmd_name}: command not found"
-            return self.COMMAND_NOT_FOUND_EXIT_FLAG, error_output, self.SHOULD_NOT_EXIT 
+            return (self.COMMAND_NOT_FOUND_EXIT_FLAG, error_output, self.SHOULD_NOT_EXIT)
         
         # Command found, execute it
         try:
@@ -222,10 +261,10 @@ class ShellBuiltins:
             output = (result.stdout + result.stderr).strip()
 
             # Return the external command's return code and use constant for exit flag
-            return result.returncode, output, self.SHOULD_NOT_EXIT
+            return (result.returncode, output, self.SHOULD_NOT_EXIT)
         
         except Exception as e:
             # Catch execution errors (e.g., permission denied)
             error_output = f"shell: execution error for {cmd_name}: {e}"
             # Use constant for failure code and exit flag
-            return self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT
+            return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
