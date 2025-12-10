@@ -1,6 +1,6 @@
-# Python Shell Project: ShellBuiltins
+# Python Shell Project
 
-`ShellBuiltins` is a Python class that simulates a minimal shell environment with built-in commands and support for external programs. It allows executing commands like `echo`, `pwd`, `cd`, and also provides custom network utilities.
+Python Shell Project simulates a minimal shell environment with built-in commands and support for external programs. It allows executing commands like `echo`, `pwd`, `cd`, and also provides custom network utilities.
 
 ---
 
