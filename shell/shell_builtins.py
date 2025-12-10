@@ -176,7 +176,7 @@ class ShellBuiltins:
         Handles cleaning user terminal from all commands and outputs
         """
 
-        os.system(self.SUBPROCESS_WINDOWS_CLEAR if os.name == "nt" else "clear")
+        os.system("cls" if os.name == "nt" else "clear")
         return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
     
 
@@ -240,14 +240,29 @@ class ShellBuiltins:
             - getip: 
             - scanports: 
         """
+
+        if len(args) == 0:
+            error_output = f"shell: execution error for: {cmd}: You have to specify arguments"
+            return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
         
         if args[0] not in self.NET_COMMANDS.keys():
             error_output = f"shell: execution error for {cmd}: {args[0]} is not supported in the net command"
             return (self.STATUS_CODE_FAILED, error_output, self.SHOULD_NOT_EXIT)
-    
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
+        ## AF_INET     ->  Address Family
+        ## SOCK_STREAM ->  TPC Protocol
+        ## SOCK_DGRAM  ->  UDP Protocol
+        s: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # return (self.STATUS_CODE_SUCCESS, None, self.SHOULD_NOT_EXIT)
+        command_function: function = self.NET_COMMANDS[args[0]]
+        results: Tuple[int, str] = command_function(domain=args[1], s=s)
+
+        net_result_status_code: int = results[0]
+        net_result_message: str = results[1]
+
+        status_code: int = self.STATUS_CODE_SUCCESS if net_result_status_code == 1 else self.STATUS_CODE_FAILED
+
+        return(status_code, net_result_message, self.SHOULD_NOT_EXIT) 
 
 
     def cmd_not_found(self, cmd_name: str, args: list[str]) -> Tuple[int, Optional[str], bool]:

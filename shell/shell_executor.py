@@ -98,7 +98,6 @@ class ShellExecutor:
             prev_status = status_code
 
             # --- 3. REDIRECTION AND STANDARD OUTPUT HANDLING ---
-
             if output_text is not None and output_text.strip():
                 if command_object.stdout_redirect:
                     # Handle STDOUT Redirection (>)
