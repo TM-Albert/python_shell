@@ -92,4 +92,4 @@ net scanports <domain>  # Scans TCP ports on the target
 ```
 
 ## Author
-* [text](https://github.com/TM-Albert)
+* [Albert Grzegrzółka](https://github.com/TM-Albert)
