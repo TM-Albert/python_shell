@@ -7,13 +7,19 @@
 ## Features
 
 - **Built-in Commands**: `echo`, `pwd`, `cd`, `exit`, `clear`, `mkdir`, `rmdir`, `touch`, `rm`, `net`.
+
 - **Automatic Command Registration**: Any method starting with `cmd_` is automatically exposed as a shell command.
+
 - **Network Utilities**:
   - `getip` – resolve a domain to its IP address.
   - `scanports` – scan TCP ports on a target host.
+
 - **External Command Execution**: If a command is not built-in, attempts to run it via the system shell.
+
 - **Portable**: Works on Windows, Linux, and macOS.
+
 - **Command Result Contract**: All commands return a tuple:
+
   ```python
     (status_code: int, output_text: Optional[str], should_exit: bool)
 
@@ -27,7 +33,7 @@
 * Clone the repository:
 
 ```bash
-git clone https://github.com/<your-username>/shell_project.git
+git clone https://github.com/TM-Albert/shell_project.git
 cd shell_project
 ```
 * Make sure you have Python 3.8+
@@ -63,9 +69,9 @@ shell.run()
 ## Extending the Shell
 
 * Adding a new built-in command is simple:
-- 1. Add a method to ShellBuiltins starting with cmd_.
-- 2. Ensure it returns a tuple: (status_code, output_text, should_exit).
-- 3. The command is automatically available without further registration.
+- Add a method to ShellBuiltins starting with cmd_.
+- Ensure it returns a tuple: (status_code, output_text, should_exit).
+- The command is automatically available without further registration.
 
 * Example
 ```bash
@@ -87,5 +93,3 @@ net scanports <domain>  # Scans TCP ports on the target
 
 ## Author
 * [text](https://github.com/TM-Albert)
-
-
